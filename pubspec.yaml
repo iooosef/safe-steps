@@ -16,6 +16,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   flame: ^1.35.1
   flame_tiled: ^3.0.11
+  flame_audio: ^2.12.0
+  soundpool: ^2.4.1
 
 dev_dependencies:
   flutter_test:
@@ -32,4 +34,5 @@ flutter:
     - assets/characters/
     - assets/earthquake/Objects/
     - assets/earthquake/Buttons/
+    - assets/audio/
   #   - images/a_dot_ham.jpeg
