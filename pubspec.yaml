@@ -35,4 +35,14 @@ flutter:
     - assets/earthquake/Objects/
     - assets/earthquake/Buttons/
     - assets/audio/
-  #   - images/a_dot_ham.jpeg
+    - assets/images/
+    - assets/fonts/
+
+  # fonts
+  fonts:
+    - family: Cherry Bomb One
+      fonts:
+        - asset: assets/fonts/CherryBombOne-Regular.ttf
+
+### Color Scheme
+# Primary: #00a5ff
