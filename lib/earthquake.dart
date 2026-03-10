@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:safesteps/levels/level.dart';
 import 'package:safesteps/ssgame.dart';
 
-class Earthquake extends FlameGame with HasKeyboardHandlerComponents {
+class Earthquake extends Component with HasGameReference<SSGame> {
   @override
   Color backgroundColor() => const Color.fromARGB(255, 0, 0, 0);
 
@@ -17,8 +17,8 @@ class Earthquake extends FlameGame with HasKeyboardHandlerComponents {
   @override
   FutureOr<void> onLoad() async {
     // FIX: Tells Flame not to look for the "assets/images" folder automatically
-    images.prefix = '';
-    await images.loadAll([
+    game.images.prefix = '';
+    await game.images.loadAll([
       'assets/characters/Normal.png',
       'assets/characters/Injured.png',
       'assets/earthquake/Backgrounds/E1.jpg', // Don't forget the background!

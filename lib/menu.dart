@@ -16,8 +16,12 @@ class Menu extends Component with HasGameReference<SSGame> {
     ]);
     add(parallxComponent);
 
+    final logoSprite = await game.loadSprite('menu_logo.png');
+    final logoWidth = game.size.x * 0.5;
+    final logoHeight = logoWidth * logoSprite.srcSize.y / logoSprite.srcSize.x;
     final logo = SpriteComponent()
-      ..sprite = await game.loadSprite('menu_logo.png')
+      ..sprite = logoSprite
+      ..size = Vector2(logoWidth, logoHeight)
       ..anchor = Anchor.center
       ..x = game.size.x / 2
       ..y = game.size.y / 3;
@@ -34,7 +38,8 @@ class Menu extends Component with HasGameReference<SSGame> {
 }
 
 // Play Button Component
-class PlayButton extends PositionComponent with TapCallbacks {
+class PlayButton extends PositionComponent
+    with TapCallbacks, HasGameReference<SSGame> {
   final double width = 250;
   final double height = 80;
   final double borderRadius = 20;
@@ -116,5 +121,13 @@ class PlayButton extends PositionComponent with TapCallbacks {
         ),
       ),
     );
+  }
+
+  @override
+  void onTapUp(TapUpEvent event) {
+    // Optional: Add a slight delay before navigating to allow the tap effect to complete
+    Future.delayed(const Duration(milliseconds: 100), () {
+      game.router.pushNamed('levels');
+    });
   }
 }

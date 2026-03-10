@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:safesteps/ssgame.dart';
 
-class GameItem extends SpriteComponent with HasGameReference<Earthquake> {
+class GameItem extends SpriteComponent with HasGameReference<SSGame> {
   final String imageName;
 
   // FIX: Only use the filename here, not the full path

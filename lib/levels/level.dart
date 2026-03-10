@@ -4,7 +4,7 @@ import 'package:safesteps/objects.dart';
 import 'package:safesteps/actors/player.dart';
 import 'package:safesteps/ssgame.dart';
 
-class Level extends World with HasGameReference<Earthquake> {
+class Level extends World with HasGameReference<SSGame> {
   double trauma = 0;
   final math.Random _random = math.Random();
 

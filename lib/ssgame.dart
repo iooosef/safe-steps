@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
@@ -17,7 +16,11 @@ class SSGame extends FlameGame {
   Future<void> onLoad() async {
     router = RouterComponent(
       initialRoute: 'menu',
-      routes: {'menu': Route(Menu.new), 'levels': Route(LevelSelect.new)},
+      routes: {
+        'menu': Route(Menu.new),
+        'levels': Route(LevelSelect.new),
+        'earthquake': Route(Earthquake.new),
+      },
     );
 
     add(router);

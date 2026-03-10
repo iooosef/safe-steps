@@ -4,7 +4,7 @@ import 'package:safesteps/earthquake.dart';
 import 'package:safesteps/ssgame.dart';
 
 class Player extends SpriteComponent
-    with HasGameReference<Earthquake>, KeyboardHandler {
+    with HasGameReference<SSGame>, KeyboardHandler {
   // We set the size of the player (e.g., 64x64 pixels)
   late Sprite normal;
   late Sprite hurt;
