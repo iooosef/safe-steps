@@ -4,9 +4,10 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
-import 'package:mygame/levels/level.dart';
-import 'package:mygame/levelselect.dart';
-import 'package:mygame/menu.dart';
+import 'package:safesteps/Earthquake.dart';
+import 'package:safesteps/levels/level.dart';
+import 'package:safesteps/levelselect.dart';
+import 'package:safesteps/menu.dart';
 import 'package:flutter/material.dart' hide Route;
 
 class SSGame extends FlameGame {

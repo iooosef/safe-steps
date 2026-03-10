@@ -6,7 +6,7 @@ import 'package:flame/effects.dart';
 import 'package:flame/game.dart';
 import 'package:flame/parallax.dart';
 import 'package:flame/text.dart';
-import 'package:mygame/ssgame.dart';
+import 'package:safesteps/ssgame.dart';
 
 class Menu extends Component with HasGameReference<SSGame> {
   @override

@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 import 'package:flame/components.dart';
-import 'package:mygame/objects.dart';
-import 'package:mygame/earthquake.dart';
-import 'package:mygame/actors/player.dart';
+import 'package:safesteps/objects.dart';
+import 'package:safesteps/actors/player.dart';
+import 'package:safesteps/ssgame.dart';
 
 class Level extends World with HasGameReference<Earthquake> {
   double trauma = 0;

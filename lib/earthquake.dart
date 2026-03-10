@@ -4,7 +4,8 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:mygame/levels/level.dart';
+import 'package:safesteps/levels/level.dart';
+import 'package:safesteps/ssgame.dart';
 
 class Earthquake extends FlameGame with HasKeyboardHandlerComponents {
   @override

@@ -2,8 +2,8 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mygame/earthquake.dart';
-import 'package:mygame/ssgame.dart';
+import 'package:safesteps/earthquake.dart';
+import 'package:safesteps/ssgame.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

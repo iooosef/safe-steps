@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
-import 'package:mygame/earthquake.dart';
+import 'package:safesteps/earthquake.dart';
+import 'package:safesteps/ssgame.dart';
 
 class Player extends SpriteComponent
     with HasGameReference<Earthquake>, KeyboardHandler {
