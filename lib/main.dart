@@ -2,8 +2,8 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mygame/safetysteps.dart';
-import 'package:mygame/menu.dart';
+import 'package:mygame/earthquake.dart';
+import 'package:mygame/ssgame.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,6 +11,6 @@ void main() {
   Flame.device.fullScreen();
   Flame.device.setLandscape();
 
-  final Menu menu = Menu();
-  runApp(GameWidget(game: kDebugMode ? Menu() : menu));
+  final SSGame game = SSGame();
+  runApp(GameWidget(game: kDebugMode ? SSGame() : game));
 }

@@ -1,17 +1,17 @@
 import 'package:flame/components.dart';
-import 'package:mygame/safetysteps.dart';
+import 'package:mygame/earthquake.dart';
 
-class GameItem extends SpriteComponent with HasGameReference<Safetysteps> {
+class GameItem extends SpriteComponent with HasGameReference<Earthquake> {
   final String imageName;
 
   // FIX: Only use the filename here, not the full path
-  GameItem.clock({required Vector2 position}) 
-      : imageName = 'Clock.png', 
-        super(position: position, size: Vector2(83, 75), anchor: Anchor.center);
+  GameItem.clock({required Vector2 position})
+    : imageName = 'Clock.png',
+      super(position: position, size: Vector2(83, 75), anchor: Anchor.center);
 
-  GameItem.table({required Vector2 position}) 
-      : imageName = 'Table.png', 
-        super(position: position, size: Vector2(225, 180), anchor: Anchor.center);
+  GameItem.table({required Vector2 position})
+    : imageName = 'Table.png',
+      super(position: position, size: Vector2(225, 180), anchor: Anchor.center);
 
   @override
   Future<void> onLoad() async {

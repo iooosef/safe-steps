@@ -6,30 +6,30 @@ import 'package:flame/effects.dart';
 import 'package:flame/game.dart';
 import 'package:flame/parallax.dart';
 import 'package:flame/text.dart';
+import 'package:mygame/ssgame.dart';
 
-class Menu extends FlameGame {
+class Menu extends Component with HasGameReference<SSGame> {
   @override
-  FutureOr<void> onLoad() async {
-    final parallxComponent = await loadParallaxComponent([
+  Future<void> onLoad() async {
+    final parallxComponent = await game.loadParallaxComponent([
       ParallaxImageData('menu_bg.png'),
     ]);
     add(parallxComponent);
 
-    final logo = await SpriteComponent()
-      ..sprite = await loadSprite('menu_logo.png')
+    final logo = SpriteComponent()
+      ..sprite = await game.loadSprite('menu_logo.png')
       ..anchor = Anchor.center
-      ..x = size.x / 2
-      ..y = size.y / 3;
+      ..x = game.size.x / 2
+      ..y = game.size.y / 3;
+
     add(logo);
 
     add(
       PlayButton()
         ..anchor = Anchor.center
-        ..x = size.x / 2
-        ..y = size.y / 2,
+        ..x = game.size.x / 2
+        ..y = game.size.y / 2,
     );
-
-    return super.onLoad();
   }
 }
 
