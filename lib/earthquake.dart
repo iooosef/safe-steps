@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:safesteps/levels/level.dart';
 import 'package:safesteps/ssgame.dart';
 
-class Earthquake extends Component with HasGameReference<SSGame> {
+class earthquake extends Component with HasGameReference<SSGame> {
   @override
   Color backgroundColor() => const Color.fromARGB(255, 0, 0, 0);
 
