@@ -6,6 +6,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:safesteps/levels/level.dart';
 import 'package:safesteps/ssgame.dart';
+import 'package:safesteps/dragbutton.dart';
 
 class Earthquake extends Component with HasGameReference<SSGame> {
   @override
@@ -26,7 +27,7 @@ class Earthquake extends Component with HasGameReference<SSGame> {
       'assets/earthquake/Objects/Table.png',
     ]);
     currentLevel = Level();
-
+   
     // Matching your new 640x360 image size
     cam = CameraComponent.withFixedResolution(
       world: currentLevel,
