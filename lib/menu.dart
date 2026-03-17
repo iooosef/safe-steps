@@ -9,31 +9,54 @@ import 'package:flame/text.dart';
 import 'package:safesteps/ssgame.dart';
 
 class Menu extends Component with HasGameReference<SSGame> {
+  late final World world;
+  late final CameraComponent camera;
+
   @override
   Future<void> onLoad() async {
-    final parallxComponent = await game.loadParallaxComponent([
-      ParallaxImageData('menu_bg.png'),
-    ]);
-    add(parallxComponent);
+    world = World();
+    camera = CameraComponent.withFixedResolution(
+      width: 1280,
+      height: 720,
+      world: world,
+    );
+    camera.viewfinder.anchor = Anchor.topLeft;
+    // 1. Grab the guaranteed 1280x720 size
+    final virtualSize = camera.viewport.virtualSize;
 
+    // 2. Add background
+    final bgSprite = await game.loadSprite('menu_bg.png');
+    final bg = SpriteComponent()
+      ..sprite = bgSprite
+      ..size = virtualSize
+      ..position = Vector2.zero();
+    camera.viewport.add(bg);
+
+    // 3. Base the logo math ONLY on virtualSize
     final logoSprite = await game.loadSprite('menu_logo.png');
-    final logoWidth = game.size.x * 0.5;
+    final logoWidth = virtualSize.x * 0.5;
     final logoHeight = logoWidth * logoSprite.srcSize.y / logoSprite.srcSize.x;
+
     final logo = SpriteComponent()
       ..sprite = logoSprite
       ..size = Vector2(logoWidth, logoHeight)
       ..anchor = Anchor.center
-      ..x = game.size.x / 2
-      ..y = game.size.y / 3;
+      ..x =
+          virtualSize.x /
+          2 // Dead center horizontally
+      ..y = virtualSize.y / 3; // One-third down the screen
 
-    add(logo);
+    // 4. Base the button math ONLY on virtualSize
+    final playButton = PlayButton()
+      ..anchor = Anchor.center
+      ..x =
+          virtualSize.x /
+          2 // Dead center horizontally
+      ..y = virtualSize.y / 2; // Dead center vertically
 
-    add(
-      PlayButton()
-        ..anchor = Anchor.center
-        ..x = game.size.x / 2
-        ..y = game.size.y / 2,
-    );
+    // 5. Add to viewport
+    camera.viewport.addAll([logo, playButton]);
+    addAll([world, camera]);
   }
 }
 
