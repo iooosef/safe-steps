@@ -22,9 +22,18 @@ class Earthquake extends Component with HasGameReference<SSGame> {
     await game.images.loadAll([
       'assets/characters/Normal.png',
       'assets/characters/Injured.png',
-      'assets/earthquake/Backgrounds/E1.jpg', // Don't forget the background!
+      'assets/earthquake/Backgrounds/E1.jpg',
+      'assets/earthquake/Backgrounds/E2.jpg',
+      'assets/earthquake/Backgrounds/E3.jpg',
+      'assets/earthquake/Backgrounds/ClassroomDestroyed_640x360.png',
       'assets/earthquake/Objects/Clock.png',
       'assets/earthquake/Objects/Table.png',
+      'assets/earthquake/Buttons/CoverB(Unselected).png',
+      'assets/earthquake/Buttons/CoverB(Selected).png',
+      'assets/earthquake/Buttons/DuckB(Unselected).png',
+      'assets/earthquake/Buttons/DropB(Selected).png',
+      'assets/earthquake/Buttons/HoldB(Unselected).png',
+      'assets/earthquake/Buttons/HoldB(Selected).png',
     ]);
     currentLevel = Level();
    
