@@ -48,7 +48,7 @@ class Level extends World with HasGameReference<SSGame> {
       [frame1, frame2, frame3],
       stepTime: 1, // 1 second per frame
     );
-    
+
     // Use SpriteAnimationComponent instead of SpriteComponent
     background = SpriteAnimationComponent(
       animation: bgAnimation,
@@ -68,47 +68,55 @@ class Level extends World with HasGameReference<SSGame> {
 
     // --- 3. SNAP SLOT PLACEHOLDERS ---
     for (final slotPos in [Vector2(250, 180), Vector2(380, 180), Vector2(510, 180)]) {
-      add(RectangleComponent(
-        position: slotPos,
-        size: Vector2(70, 70),
-        anchor: Anchor.center,
-        paint: Paint()
-          ..color = Colors.white24
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2,
-      ));
+      add(
+        RectangleComponent(
+          position: slotPos,
+          size: Vector2(70, 70),
+          anchor: Anchor.center,
+          paint: Paint()
+            ..color = Colors.white24
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2,
+        ),
+      );
     }
 
     // --- 4. DRAGGABLE BUTTONS (puzzle: arrange in Drop, Cover, Hold order) ---
     // Correct slot positions (left to right): Drop=250, Cover=380, Hold=510
     // Buttons start shuffled in the WRONG order so the player must rearrange them.
-    add(DraggableButton(
-      buttonType: 'cover',
-      imagePath: 'assets/earthquake/Buttons/CoverB(Unselected).png',
-      selectedImagePath: 'assets/earthquake/Buttons/CoverB(Selected).png',
-      snapTarget: Vector2(380, 180),
-      position: Vector2(510, 180),
-      size: Vector2(70, 70),
-      onSnapped: _onButtonSnapped,
-    ));
-    add(DraggableButton(
-      buttonType: 'drop',
-      imagePath: 'assets/earthquake/Buttons/DuckB(Unselected).png',
-      selectedImagePath: 'assets/earthquake/Buttons/DropB(Selected).png',
-      snapTarget: Vector2(250, 180),
-      position: Vector2(380, 180),
-      size: Vector2(70, 70),
-      onSnapped: _onButtonSnapped,
-    ));
-    add(DraggableButton(
-      buttonType: 'hold',
-      imagePath: 'assets/earthquake/Buttons/HoldB(Unselected).png',
-      selectedImagePath: 'assets/earthquake/Buttons/HoldB(Selected).png',
-      snapTarget: Vector2(510, 180),
-      position: Vector2(250, 180),
-      size: Vector2(70, 70),
-      onSnapped: _onButtonSnapped,
-    ));
+    add(
+      DraggableButton(
+        buttonType: 'cover',
+        imagePath: 'assets/earthquake/Buttons/CoverB(Unselected).png',
+        selectedImagePath: 'assets/earthquake/Buttons/CoverB(Selected).png',
+        snapTarget: Vector2(380, 180),
+        position: Vector2(510, 180),
+        size: Vector2(70, 70),
+        onSnapped: _onButtonSnapped,
+      ),
+    );
+    add(
+      DraggableButton(
+        buttonType: 'drop',
+        imagePath: 'assets/earthquake/Buttons/DuckB(Unselected).png',
+        selectedImagePath: 'assets/earthquake/Buttons/DropB(Selected).png',
+        snapTarget: Vector2(250, 180),
+        position: Vector2(380, 180),
+        size: Vector2(70, 70),
+        onSnapped: _onButtonSnapped,
+      ),
+    );
+    add(
+      DraggableButton(
+        buttonType: 'hold',
+        imagePath: 'assets/earthquake/Buttons/HoldB(Unselected).png',
+        selectedImagePath: 'assets/earthquake/Buttons/HoldB(Selected).png',
+        snapTarget: Vector2(510, 180),
+        position: Vector2(250, 180),
+        size: Vector2(70, 70),
+        onSnapped: _onButtonSnapped,
+      ),
+    );
 
     add(TimerComponent(period: 0.0, onTick: () => startEarthquake(0.5)));
   }
@@ -141,10 +149,9 @@ class Level extends World with HasGameReference<SSGame> {
   void _onButtonSnapped(String buttonType) {
     _snappedCount++;
     if (_snappedCount >= 3) {
-      background.animation = SpriteAnimation.spriteList(
-        [destroyedBackground],
-        stepTime: 1,
-      );
+      background.animation = SpriteAnimation.spriteList([
+        destroyedBackground,
+      ], stepTime: 1);
       clock.removeFromParent();
       table.removeFromParent();
       stopEarthquake();
