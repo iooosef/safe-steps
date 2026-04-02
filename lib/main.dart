@@ -75,5 +75,19 @@ Map<String, Widget Function(BuildContext, SSGame)> _buildTutorialOverlays(
         children: [HintOverlay()],
       );
     },
+    'gameSuccess': (context, game) {
+      final tutorial = game.activeTutorial;
+      if (tutorial == null) return const SizedBox.shrink();
+      return GameSuccessOverlay(
+        onBackToLevels: () => tutorial.onSuccessTap(),
+      );
+    },
+    'gameFailure': (context, game) {
+      final tutorial = game.activeTutorial;
+      if (tutorial == null) return const SizedBox.shrink();
+      return GameFailureOverlay(
+        onPlayAgain: () => tutorial.onGameOverRetry(),
+      );
+    },
   };
 }

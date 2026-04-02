@@ -41,6 +41,7 @@ class DraggableButton extends SpriteComponent
     if (isSnapped) return;
     super.onDragStart(event);
     isDragging = true;
+    priority = 100;
     add(ScaleEffect.to(Vector2.all(1.1), EffectController(duration: 0.1)));
   }
 
@@ -55,6 +56,7 @@ class DraggableButton extends SpriteComponent
     if (isSnapped) return;
     super.onDragEnd(event);
     isDragging = false;
+    priority = 1;
 
     if (position.distanceTo(snapTarget) < snapThreshold) {
       _snapToTarget();
@@ -65,6 +67,7 @@ class DraggableButton extends SpriteComponent
 
   Future<void> _snapToTarget() async {
     isSnapped = true;
+    priority = 0;
     position = snapTarget.clone();
     sprite = await game.loadSprite(selectedImagePath);
     add(ScaleEffect.to(

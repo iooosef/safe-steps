@@ -22,6 +22,8 @@ const List<String> _earthquakeAssets = [
   'assets/characters/Normal.png',
   'assets/characters/Injured.png',
   'assets/characters/Bandage.png',
+  'assets/characters/TeacherExplaining.png',
+  'assets/characters/TeacherDoneExplaining.png',
   'assets/characters/walkingwithbag.1.png',
   'assets/characters/walkingwithbag.2.png',
   'assets/characters/walkingwithbag.3.png',
@@ -67,6 +69,7 @@ class Earthquake extends Component with HasGameReference<SSGame> {
 
     final tutorialWorld = TutorialWorld(onFinished: () {
       cam.world = _level;
+      _level.activate();
     });
 
     final hallwayWorld = HallwayIntroWorld(onFinished: () {
@@ -183,21 +186,34 @@ class TutorialWorld extends World
 
   late final SpriteComponent _normalBg;
   late final SpriteComponent _darkBg;
+
+  // Two characters: teacher on the left, player/classmate on the right.
+  late final SpriteComponent _teacherCharacter;
   late final SpriteComponent _playerCharacter;
+
+  late Sprite _teacherExplainingSprite;
+  late Sprite _teacherDoneSprite;
+  late Sprite _normalSprite;
+  late Sprite _injuredSprite;
+  late Sprite _bandageSprite;
+
+  String _activeSpeaker = 'Teacher';
 
   final List<_PuzzlePiece> _pieces = [];
   final List<Component> _puzzleComponents = [];
 
+  // Horizontal slots matching the minigame layout (left → right).
   static final List<Vector2> _slotPositions = [
-    Vector2(420, 80),
-    Vector2(420, 170),
-    Vector2(420, 260),
+    Vector2(250, 180),
+    Vector2(380, 180),
+    Vector2(510, 180),
   ];
 
+  // Pieces start in scrambled order along a row above the slots.
   static final List<Vector2> _pieceStartPositions = [
-    Vector2(160, 260),
-    Vector2(160, 80),
-    Vector2(160, 170),
+    Vector2(510, 60),
+    Vector2(250, 60),
+    Vector2(380, 60),
   ];
 
   TutorialWorld({required this.onFinished});
@@ -205,6 +221,18 @@ class TutorialWorld extends World
   @override
   Future<void> onLoad() async {
     super.onLoad();
+
+    // Cache character sprites.
+    _teacherExplainingSprite =
+        Sprite(game.images.fromCache('assets/characters/TeacherExplaining.png'));
+    _teacherDoneSprite =
+        Sprite(game.images.fromCache('assets/characters/TeacherDoneExplaining.png'));
+    _normalSprite =
+        Sprite(game.images.fromCache('assets/characters/Normal.png'));
+    _injuredSprite =
+        Sprite(game.images.fromCache('assets/characters/Injured.png'));
+    _bandageSprite =
+        Sprite(game.images.fromCache('assets/characters/Bandage.png'));
 
     _normalBg = SpriteComponent(
       sprite: await game.loadSprite('assets/earthquake/Backgrounds/normal_640x360.png'),
@@ -218,17 +246,28 @@ class TutorialWorld extends World
     )..opacity = 0;
     add(_darkBg);
 
-    _playerCharacter = SpriteComponent(
-      sprite: await game.loadSprite('assets/characters/Normal.png'),
-      size: Vector2(137, 182),
-      anchor: Anchor.bottomLeft,
-      position: Vector2(16, 350),
+    // Teacher – left side.
+    _teacherCharacter = SpriteComponent(
+      sprite: _teacherExplainingSprite,
+      size: Vector2(274, 365),
+      anchor: Anchor.bottomCenter,
+      position: Vector2(128, 360),
     );
+    add(_teacherCharacter);
+
+    // Player / Classmate – right side, starts hidden.
+    _playerCharacter = SpriteComponent(
+      sprite: _normalSprite,
+      size: Vector2(274, 365),
+      anchor: Anchor.bottomCenter,
+      position: Vector2(512, 500),
+    )..opacity = 0;
     add(_playerCharacter);
   }
 
   void activate() {
     game.activeTutorial = this;
+    _swapToSpeaker(state.currentLine?.speaker ?? 'Teacher');
     _showDialogueOverlay();
   }
 
@@ -236,7 +275,42 @@ class TutorialWorld extends World
 
   void _showDialogueOverlay() {
     _removeAllOverlays();
+    final speaker = state.currentLine?.speaker ?? 'Teacher';
+    _swapToSpeaker(speaker);
     game.overlays.add('tutorialDialogue');
+  }
+
+  // ── Speaker-based character swapping ───────────────────────────────────
+
+  static const double _fadeInDuration = 0.25;
+  static const double _fadeOutDuration = 0.15;
+
+  void _swapToSpeaker(String speaker) {
+    if (speaker == _activeSpeaker) return;
+    _activeSpeaker = speaker;
+
+    if (speaker == 'Teacher') {
+      // Fade teacher in, fade player out.
+      _teacherCharacter
+        ..removeAll(_teacherCharacter.children.whereType<OpacityEffect>())
+        ..add(OpacityEffect.to(1.0,
+            EffectController(duration: _fadeInDuration)));
+      _playerCharacter
+        ..removeAll(_playerCharacter.children.whereType<OpacityEffect>())
+        ..add(OpacityEffect.to(0.0,
+            EffectController(duration: _fadeOutDuration)));
+    } else {
+      // 'You' or 'Classmate' — fade player in, dim teacher.
+      _playerCharacter
+        ..sprite = _normalSprite
+        ..removeAll(_playerCharacter.children.whereType<OpacityEffect>())
+        ..add(OpacityEffect.to(1.0,
+            EffectController(duration: _fadeInDuration)));
+      _teacherCharacter
+        ..removeAll(_teacherCharacter.children.whereType<OpacityEffect>())
+        ..add(OpacityEffect.to(0.3,
+            EffectController(duration: _fadeOutDuration)));
+    }
   }
 
   void _removeAllOverlays() {
@@ -270,6 +344,7 @@ class TutorialWorld extends World
     _removeAllOverlays();
     for (int i = 0; i < _pieces.length; i++) {
       _pieces[i].position = _pieceStartPositions[i].toVector2();
+      _pieces[i].resetSprite();
     }
     if (state.showHint) {
       game.overlays.add('tutorialHint');
@@ -293,13 +368,23 @@ class TutorialWorld extends World
     _puzzleComponents.clear();
     _pieces.clear();
     _darkBg.opacity = 0;
-    _updatePlayerSprite('normal');
+    // Reset both characters to initial narrative state.
+    _activeSpeaker = 'Teacher';
+    _teacherCharacter
+      ..sprite = _teacherExplainingSprite
+      ..opacity = 1;
+    _playerCharacter
+      ..sprite = _normalSprite
+      ..opacity = 0;
     _showDialogueOverlay();
   }
 
   // ── Background transition ──────────────────────────────────────────────
 
   void _transitionToDark() {
+    // Teacher finishes explaining before the earthquake hits.
+    _teacherCharacter.sprite = _teacherDoneSprite;
+
     _darkBg.add(OpacityEffect.to(
       1.0,
       EffectController(duration: 2.0, curve: Curves.easeInOut),
@@ -312,11 +397,33 @@ class TutorialWorld extends World
 
   // ── Puzzle Phase ───────────────────────────────────────────────────────
 
+  Sprite _cachedSprite(String path) => Sprite(game.images.fromCache(path));
+
+  static const Map<String, (String, String)> _pieceAssets = {
+    'drop': (
+      'assets/earthquake/Buttons/DuckB(Unselected).png',
+      'assets/earthquake/Buttons/DropB(Selected).png',
+    ),
+    'cover': (
+      'assets/earthquake/Buttons/CoverB(Unselected).png',
+      'assets/earthquake/Buttons/CoverB(Selected).png',
+    ),
+    'hold': (
+      'assets/earthquake/Buttons/HoldB(Unselected).png',
+      'assets/earthquake/Buttons/HoldB(Selected).png',
+    ),
+  };
+
   void _startPuzzlePhase() {
+    // Hide characters to make room for the horizontal puzzle.
+    _teacherCharacter.opacity = 0;
+    _playerCharacter.opacity = 0;
+
     for (int i = 0; i < 3; i++) {
+      // Slot outline – same 70×70 as the minigame.
       final slotOutline = RectangleComponent(
         position: _slotPositions[i].toVector2(),
-        size: Vector2(180, 70),
+        size: Vector2(70, 70),
         anchor: Anchor.center,
         paint: Paint()
           ..color = Colors.white24
@@ -326,9 +433,10 @@ class TutorialWorld extends World
       _puzzleComponents.add(slotOutline);
       add(slotOutline);
 
+      // Numbered label below each slot.
       final slotLabel = TextComponent(
         text: '${i + 1}',
-        position: _slotPositions[i].toVector2() - Vector2(110, 0),
+        position: _slotPositions[i].toVector2() + Vector2(0, 55),
         anchor: Anchor.center,
         textRenderer: TextPaint(
           style: const TextStyle(
@@ -342,17 +450,17 @@ class TutorialWorld extends World
       add(slotLabel);
     }
 
-    const pieceData = [
-      ('cover', 'Cover under desk'),
-      ('hold', 'Hold the table'),
-      ('drop', 'Drop'),
-    ];
+    // Scrambled order: cover, hold, drop (must be rearranged to drop, cover, hold).
+    const pieceOrder = ['cover', 'hold', 'drop'];
 
     _pieces.clear();
-    for (int i = 0; i < pieceData.length; i++) {
+    for (int i = 0; i < pieceOrder.length; i++) {
+      final id = pieceOrder[i];
+      final assets = _pieceAssets[id]!;
       final piece = _PuzzlePiece(
-        id: pieceData[i].$1,
-        label: pieceData[i].$2,
+        id: id,
+        unselectedSprite: _cachedSprite(assets.$1),
+        selectedSprite: _cachedSprite(assets.$2),
         slotPositions: _slotPositions.map((v) => v.toVector2()).toList(),
         startPosition: _pieceStartPositions[i].toVector2(),
       );
@@ -362,9 +470,9 @@ class TutorialWorld extends World
     }
 
     final submit = _SubmitButton(
-      position: Vector2(420, 335),
+      position: Vector2(380, 290),
       onPressed: _onPuzzleSubmit,
-    );
+    )..priority = 1;
     _puzzleComponents.add(submit);
     add(submit);
 
@@ -374,6 +482,14 @@ class TutorialWorld extends World
   }
 
   void _onPuzzleSubmit() {
+    // Require all 3 slots to be filled before validating.
+    final snappedCount = _pieces.where((p) => p.isSnapped).length;
+    if (snappedCount < 3) {
+      _removeAllOverlays();
+      game.overlays.add('tutorialHint');
+      return;
+    }
+
     final order = <String>[];
     for (final slotPos in _slotPositions) {
       _PuzzlePiece? closest;
@@ -403,12 +519,13 @@ class TutorialWorld extends World
   }
 
   void _updatePlayerSprite(String key) {
-    final path = switch (key) {
-      'injured' => 'assets/characters/Injured.png',
-      'bandage' => 'assets/characters/Bandage.png',
-      _ => 'assets/characters/Normal.png',
+    _playerCharacter.sprite = switch (key) {
+      'injured' => _injuredSprite,
+      'bandage' => _bandageSprite,
+      _ => _normalSprite,
     };
-    game.loadSprite(path).then((spr) => _playerCharacter.sprite = spr);
+    // During puzzle phase the player should be visible.
+    _playerCharacter.opacity = 1;
   }
 
   @override
@@ -422,54 +539,56 @@ class TutorialWorld extends World
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// _PuzzlePiece – Draggable card for one earthquake safety step.
+// _PuzzlePiece – Draggable button sprite for one earthquake safety step.
+// Shows unselected sprite when free, selected sprite when snapped to a slot.
 // ─────────────────────────────────────────────────────────────────────────────
 class _PuzzlePiece extends PositionComponent with DragCallbacks {
   final String id;
-  final String label;
+  final Sprite unselectedSprite;
+  final Sprite selectedSprite;
   final List<Vector2> slotPositions;
   final Vector2 startPosition;
+
+  late final SpriteComponent _spriteComp;
+  bool isSnapped = false;
 
   static const double snapThreshold = 50;
 
   _PuzzlePiece({
     required this.id,
-    required this.label,
+    required this.unselectedSprite,
+    required this.selectedSprite,
     required this.slotPositions,
     required this.startPosition,
   }) : super(
-          size: Vector2(180, 60),
+          size: Vector2(70, 70),
           anchor: Anchor.center,
           position: startPosition.clone(),
+          priority: 1,
         );
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
+    _spriteComp = SpriteComponent(
+      sprite: unselectedSprite,
+      size: size,
+    );
+    add(_spriteComp);
+  }
 
-    add(RectangleComponent(
-      size: size,
-      paint: Paint()..color = const Color(0xFF2A3A5C),
-    ));
-    add(RectangleComponent(
-      size: size,
-      paint: Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5,
-    ));
-    add(TextComponent(
-      text: label,
-      position: size / 2,
-      anchor: Anchor.center,
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          fontFamily: 'Cherry Bomb One',
-          fontSize: 16,
-          color: Colors.white,
-        ),
-      ),
-    ));
+  void resetSprite() {
+    _spriteComp.sprite = unselectedSprite;
+    isSnapped = false;
+    priority = 1;
+  }
+
+  @override
+  void onDragStart(DragStartEvent event) {
+    super.onDragStart(event);
+    isSnapped = false;
+    priority = 100;
+    _spriteComp.sprite = unselectedSprite;
   }
 
   @override
@@ -483,9 +602,13 @@ class _PuzzlePiece extends PositionComponent with DragCallbacks {
     for (final slot in slotPositions) {
       if (position.distanceTo(slot) < snapThreshold) {
         position = slot.clone();
+        _spriteComp.sprite = selectedSprite;
+        isSnapped = true;
+        priority = 0;
         return;
       }
     }
+    priority = 1;
   }
 }
 

@@ -378,3 +378,117 @@ class HintOverlay extends StatelessWidget {
     );
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Minigame-specific full-screen overlays (Success & Game Over).
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Full-screen success overlay for the earthquake minigame.
+class GameSuccessOverlay extends StatelessWidget {
+  final VoidCallback onBackToLevels;
+
+  const GameSuccessOverlay({super.key, required this.onBackToLevels});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.black54,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            'assets/images/Congratulations.png',
+            width: 320,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'You remembered the safety steps!\nDrop, Cover, and Hold!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Cherry Bomb One',
+              fontSize: 16,
+              color: Colors.white70,
+              decoration: TextDecoration.none,
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: onBackToLevels,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF00A5FF),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text(
+              'Back to Levels',
+              style: TextStyle(
+                fontFamily: 'Cherry Bomb One',
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Full-screen game over overlay for the earthquake minigame.
+class GameFailureOverlay extends StatelessWidget {
+  final VoidCallback onPlayAgain;
+
+  const GameFailureOverlay({super.key, required this.onPlayAgain});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.black54,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            'assets/images/GameOver.png',
+            width: 320,
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'You ran out of chances.\nLet\'s study the safety steps again!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Cherry Bomb One',
+              fontSize: 16,
+              color: Colors.white70,
+              decoration: TextDecoration.none,
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: onPlayAgain,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF00A5FF),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text(
+              'Play Again',
+              style: TextStyle(
+                fontFamily: 'Cherry Bomb One',
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
