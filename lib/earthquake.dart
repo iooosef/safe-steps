@@ -40,12 +40,12 @@ const List<String> _earthquakeAssets = [
   'assets/earthquake/Objects/Clock.png',
   'assets/earthquake/Objects/Table.png',
   // Buttons
-  'assets/earthquake/Buttons/CoverB(Unselected).png',
-  'assets/earthquake/Buttons/CoverB(Selected).png',
-  'assets/earthquake/Buttons/DuckB(Unselected).png',
-  'assets/earthquake/Buttons/DropB(Selected).png',
-  'assets/earthquake/Buttons/HoldB(Unselected).png',
-  'assets/earthquake/Buttons/HoldB(Selected).png',
+  'assets/earthquake/Buttons/CoverB_Unselected.png',
+  'assets/earthquake/Buttons/CoverB_Selected.png',
+  'assets/earthquake/Buttons/DuckB_Unselected.png',
+  'assets/earthquake/Buttons/DropB_Selected.png',
+  'assets/earthquake/Buttons/HoldB_Unselected.png',
+  'assets/earthquake/Buttons/HoldB_Selected.png',
   // Comics
   'assets/earthquake/comics/sun1.png',
   'assets/earthquake/comics/sun2.png',
@@ -401,16 +401,16 @@ class TutorialWorld extends World
 
   static const Map<String, (String, String)> _pieceAssets = {
     'drop': (
-      'assets/earthquake/Buttons/DuckB(Unselected).png',
-      'assets/earthquake/Buttons/DropB(Selected).png',
+      'assets/earthquake/Buttons/DuckB_Unselected.png',
+      'assets/earthquake/Buttons/DropB_Selected.png',
     ),
     'cover': (
-      'assets/earthquake/Buttons/CoverB(Unselected).png',
-      'assets/earthquake/Buttons/CoverB(Selected).png',
+      'assets/earthquake/Buttons/CoverB_Unselected.png',
+      'assets/earthquake/Buttons/CoverB_Selected.png',
     ),
     'hold': (
-      'assets/earthquake/Buttons/HoldB(Unselected).png',
-      'assets/earthquake/Buttons/HoldB(Selected).png',
+      'assets/earthquake/Buttons/HoldB_Unselected.png',
+      'assets/earthquake/Buttons/HoldB_Selected.png',
     ),
   };
 
