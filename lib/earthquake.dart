@@ -67,19 +67,25 @@ class Earthquake extends Component with HasGameReference<SSGame> {
 
     _level = Level();
 
-    final tutorialWorld = TutorialWorld(onFinished: () {
-      cam.world = _level;
-      _level.activate();
-    });
+    final tutorialWorld = TutorialWorld(
+      onFinished: () {
+        cam.world = _level;
+        _level.activate();
+      },
+    );
 
-    final hallwayWorld = HallwayIntroWorld(onFinished: () {
-      cam.world = tutorialWorld;
-      tutorialWorld.activate();
-    });
+    final hallwayWorld = HallwayIntroWorld(
+      onFinished: () {
+        cam.world = tutorialWorld;
+        tutorialWorld.activate();
+      },
+    );
 
-    final sunWorld = SunIntroWorld(onFinished: () {
-      cam.world = hallwayWorld;
-    });
+    final sunWorld = SunIntroWorld(
+      onFinished: () {
+        cam.world = hallwayWorld;
+      },
+    );
 
     cam = CameraComponent.withFixedResolution(
       world: sunWorld,
@@ -113,11 +119,26 @@ class SunIntroWorld extends World with HasGameReference<SSGame> {
     final sun2 = await game.loadSprite('assets/earthquake/comics/sun2.png');
     final sun3 = await game.loadSprite('assets/earthquake/comics/sun3.png');
 
-    final sprite = SpriteComponent(sprite: sun1, size: Vector2(kViewportW, kViewportH));
+    final sprite = SpriteComponent(
+      sprite: sun1,
+      size: Vector2(kViewportW, kViewportH),
+    );
     add(sprite);
 
-    add(TimerComponent(period: 0.5, removeOnFinish: true, onTick: () => sprite.sprite = sun2));
-    add(TimerComponent(period: 1.0, removeOnFinish: true, onTick: () => sprite.sprite = sun3));
+    add(
+      TimerComponent(
+        period: 0.5,
+        removeOnFinish: true,
+        onTick: () => sprite.sprite = sun2,
+      ),
+    );
+    add(
+      TimerComponent(
+        period: 1.0,
+        removeOnFinish: true,
+        onTick: () => sprite.sprite = sun3,
+      ),
+    );
     add(TimerComponent(period: 1.5, removeOnFinish: true, onTick: onFinished));
   }
 }
@@ -138,18 +159,33 @@ class HallwayIntroWorld extends World with HasGameReference<SSGame> {
     super.onLoad();
 
     final hallway = SpriteComponent(
-      sprite: await game.loadSprite('assets/earthquake/Backgrounds/Hallway.png'),
+      sprite: await game.loadSprite(
+        'assets/earthquake/Backgrounds/Hallway.png',
+      ),
       size: Vector2(_hallwayW, kViewportH),
       position: Vector2.zero(),
     );
     add(hallway);
 
-    final walk1 = await game.loadSprite('assets/characters/walkingwithbag.1.png');
-    final walk2 = await game.loadSprite('assets/characters/walkingwithbag.2.png');
-    final walk3 = await game.loadSprite('assets/characters/walkingwithbag.3.png');
-    final walk4 = await game.loadSprite('assets/characters/walkingwithbag.4.png');
+    final walk1 = await game.loadSprite(
+      'assets/characters/walkingwithbag.1.png',
+    );
+    final walk2 = await game.loadSprite(
+      'assets/characters/walkingwithbag.2.png',
+    );
+    final walk3 = await game.loadSprite(
+      'assets/characters/walkingwithbag.3.png',
+    );
+    final walk4 = await game.loadSprite(
+      'assets/characters/walkingwithbag.4.png',
+    );
 
-    final walkAnim = SpriteAnimation.spriteList([walk1, walk2, walk3, walk4], stepTime: 0.25);
+    final walkAnim = SpriteAnimation.spriteList([
+      walk1,
+      walk2,
+      walk3,
+      walk4,
+    ], stepTime: 0.25);
 
     final character = SpriteAnimationComponent(
       animation: walkAnim,
@@ -159,16 +195,20 @@ class HallwayIntroWorld extends World with HasGameReference<SSGame> {
     );
     add(character);
 
-    hallway.add(MoveEffect.by(
-      Vector2(-_scrollDistance, 0),
-      EffectController(duration: _scrollDuration, curve: Curves.linear),
-    ));
+    hallway.add(
+      MoveEffect.by(
+        Vector2(-_scrollDistance, 0),
+        EffectController(duration: _scrollDuration, curve: Curves.linear),
+      ),
+    );
 
-    add(TimerComponent(
-      period: _scrollDuration + 0.3,
-      removeOnFinish: true,
-      onTick: onFinished,
-    ));
+    add(
+      TimerComponent(
+        period: _scrollDuration + 0.3,
+        removeOnFinish: true,
+        onTick: onFinished,
+      ),
+    );
   }
 }
 
@@ -223,25 +263,34 @@ class TutorialWorld extends World
     super.onLoad();
 
     // Cache character sprites.
-    _teacherExplainingSprite =
-        Sprite(game.images.fromCache('assets/characters/TeacherExplaining.png'));
-    _teacherDoneSprite =
-        Sprite(game.images.fromCache('assets/characters/TeacherDoneExplaining.png'));
-    _normalSprite =
-        Sprite(game.images.fromCache('assets/characters/Normal.png'));
-    _injuredSprite =
-        Sprite(game.images.fromCache('assets/characters/Injured.png'));
-    _bandageSprite =
-        Sprite(game.images.fromCache('assets/characters/Bandage.png'));
+    _teacherExplainingSprite = Sprite(
+      game.images.fromCache('assets/characters/TeacherExplaining.png'),
+    );
+    _teacherDoneSprite = Sprite(
+      game.images.fromCache('assets/characters/TeacherDoneExplaining.png'),
+    );
+    _normalSprite = Sprite(
+      game.images.fromCache('assets/characters/Normal.png'),
+    );
+    _injuredSprite = Sprite(
+      game.images.fromCache('assets/characters/Injured.png'),
+    );
+    _bandageSprite = Sprite(
+      game.images.fromCache('assets/characters/Bandage.png'),
+    );
 
     _normalBg = SpriteComponent(
-      sprite: await game.loadSprite('assets/earthquake/Backgrounds/normal_640x360.png'),
+      sprite: await game.loadSprite(
+        'assets/earthquake/Backgrounds/normal_640x360.png',
+      ),
       size: Vector2(kViewportW, kViewportH),
     );
     add(_normalBg);
 
     _darkBg = SpriteComponent(
-      sprite: await game.loadSprite('assets/earthquake/Backgrounds/dark_bg.png'),
+      sprite: await game.loadSprite(
+        'assets/earthquake/Backgrounds/dark_bg.png',
+      ),
       size: Vector2(kViewportW, kViewportH),
     )..opacity = 0;
     add(_darkBg);
@@ -293,23 +342,27 @@ class TutorialWorld extends World
       // Fade teacher in, fade player out.
       _teacherCharacter
         ..removeAll(_teacherCharacter.children.whereType<OpacityEffect>())
-        ..add(OpacityEffect.to(1.0,
-            EffectController(duration: _fadeInDuration)));
+        ..add(
+          OpacityEffect.to(1.0, EffectController(duration: _fadeInDuration)),
+        );
       _playerCharacter
         ..removeAll(_playerCharacter.children.whereType<OpacityEffect>())
-        ..add(OpacityEffect.to(0.0,
-            EffectController(duration: _fadeOutDuration)));
+        ..add(
+          OpacityEffect.to(0.0, EffectController(duration: _fadeOutDuration)),
+        );
     } else {
       // 'You' or 'Classmate' — fade player in, dim teacher.
       _playerCharacter
         ..sprite = _normalSprite
         ..removeAll(_playerCharacter.children.whereType<OpacityEffect>())
-        ..add(OpacityEffect.to(1.0,
-            EffectController(duration: _fadeInDuration)));
+        ..add(
+          OpacityEffect.to(1.0, EffectController(duration: _fadeInDuration)),
+        );
       _teacherCharacter
         ..removeAll(_teacherCharacter.children.whereType<OpacityEffect>())
-        ..add(OpacityEffect.to(0.3,
-            EffectController(duration: _fadeOutDuration)));
+        ..add(
+          OpacityEffect.to(0.3, EffectController(duration: _fadeOutDuration)),
+        );
     }
   }
 
@@ -385,14 +438,16 @@ class TutorialWorld extends World
     // Teacher finishes explaining before the earthquake hits.
     _teacherCharacter.sprite = _teacherDoneSprite;
 
-    _darkBg.add(OpacityEffect.to(
-      1.0,
-      EffectController(duration: 2.0, curve: Curves.easeInOut),
-      onComplete: () {
-        state.onTransitionComplete();
-        _showDialogueOverlay();
-      },
-    ));
+    _darkBg.add(
+      OpacityEffect.to(
+        1.0,
+        EffectController(duration: 2.0, curve: Curves.easeInOut),
+        onComplete: () {
+          state.onTransitionComplete();
+          _showDialogueOverlay();
+        },
+      ),
+    );
   }
 
   // ── Puzzle Phase ───────────────────────────────────────────────────────
@@ -561,19 +616,16 @@ class _PuzzlePiece extends PositionComponent with DragCallbacks {
     required this.slotPositions,
     required this.startPosition,
   }) : super(
-          size: Vector2(70, 70),
-          anchor: Anchor.center,
-          position: startPosition.clone(),
-          priority: 1,
-        );
+         size: Vector2(70, 70),
+         anchor: Anchor.center,
+         position: startPosition.clone(),
+         priority: 1,
+       );
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
-    _spriteComp = SpriteComponent(
-      sprite: unselectedSprite,
-      size: size,
-    );
+    _spriteComp = SpriteComponent(sprite: unselectedSprite, size: size);
     add(_spriteComp);
   }
 
@@ -618,35 +670,33 @@ class _PuzzlePiece extends PositionComponent with DragCallbacks {
 class _SubmitButton extends PositionComponent with TapCallbacks {
   final VoidCallback onPressed;
 
-  _SubmitButton({
-    required Vector2 position,
-    required this.onPressed,
-  }) : super(
-          position: position,
-          size: Vector2(140, 44),
-          anchor: Anchor.center,
-        );
+  _SubmitButton({required Vector2 position, required this.onPressed})
+    : super(position: position, size: Vector2(140, 44), anchor: Anchor.center);
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
 
-    add(RectangleComponent(
-      size: size,
-      paint: Paint()..color = const Color(0xFF00A5FF),
-    ));
-    add(TextComponent(
-      text: 'Check Order',
-      position: size / 2,
-      anchor: Anchor.center,
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          fontFamily: 'Cherry Bomb One',
-          fontSize: 16,
-          color: Colors.white,
+    add(
+      RectangleComponent(
+        size: size,
+        paint: Paint()..color = const Color(0xFF00A5FF),
+      ),
+    );
+    add(
+      TextComponent(
+        text: 'Check Order',
+        position: size / 2,
+        anchor: Anchor.center,
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            fontFamily: 'Cherry Bomb One',
+            fontSize: 16,
+            color: Colors.white,
+          ),
         ),
       ),
-    ));
+    );
   }
 
   @override
