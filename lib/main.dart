@@ -2,6 +2,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:safesteps/safetysteps_game.dart';
 import 'package:safesteps/ssgame.dart';
 import 'package:safesteps/tutorial_overlay.dart';
 
@@ -11,17 +12,15 @@ void main() {
   Flame.device.fullScreen();
   Flame.device.setLandscape();
 
-  final SSGame game = kDebugMode ? SSGame() : SSGame();
-  runApp(
-    GameWidget(
-      game: game,
-      overlayBuilderMap: _buildTutorialOverlays(game),
-    ),
-  );
+  var game = SafetyStepsGame();
+  runApp(GameWidget(game: game));
 }
 
+// refactor this out of main dart later
+
 Map<String, Widget Function(BuildContext, SSGame)> _buildTutorialOverlays(
-    SSGame game) {
+  SSGame game,
+) {
   return {
     'tutorialDialogue': (context, game) {
       final tutorial = game.activeTutorial;
@@ -31,10 +30,7 @@ Map<String, Widget Function(BuildContext, SSGame)> _buildTutorialOverlays(
       }
       return Stack(
         children: [
-          DialogueOverlay(
-            line: line,
-            onTap: () => tutorial.onDialogueTap(),
-          ),
+          DialogueOverlay(line: line, onTap: () => tutorial.onDialogueTap()),
         ],
       );
     },
@@ -66,28 +62,20 @@ Map<String, Widget Function(BuildContext, SSGame)> _buildTutorialOverlays(
     'tutorialGameOver': (context, game) {
       final tutorial = game.activeTutorial;
       if (tutorial == null) return const SizedBox.shrink();
-      return GameOverOverlay(
-        onRetry: () => tutorial.onGameOverRetry(),
-      );
+      return GameOverOverlay(onRetry: () => tutorial.onGameOverRetry());
     },
     'tutorialHint': (context, game) {
-      return const Stack(
-        children: [HintOverlay()],
-      );
+      return const Stack(children: [HintOverlay()]);
     },
     'gameSuccess': (context, game) {
       final tutorial = game.activeTutorial;
       if (tutorial == null) return const SizedBox.shrink();
-      return GameSuccessOverlay(
-        onBackToLevels: () => tutorial.onSuccessTap(),
-      );
+      return GameSuccessOverlay(onBackToLevels: () => tutorial.onSuccessTap());
     },
     'gameFailure': (context, game) {
       final tutorial = game.activeTutorial;
       if (tutorial == null) return const SizedBox.shrink();
-      return GameFailureOverlay(
-        onPlayAgain: () => tutorial.onGameOverRetry(),
-      );
+      return GameFailureOverlay(onPlayAgain: () => tutorial.onGameOverRetry());
     },
   };
 }
