@@ -35,6 +35,11 @@ flutter:
     - assets/earthquake/Buttons/
     - assets/audio/
     - assets/images/
+    - assets/images/earthquake/
+    - assets/images/earthquake/backgrounds/
+    - assets/images/earthquake/objects/
+    - assets/images/earthquake/buttons/
+    - assets/images/earthquake/comic/
     - assets/fonts/
     - assets/earthquake/comics/
 
