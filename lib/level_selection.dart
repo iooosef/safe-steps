@@ -13,15 +13,15 @@ class LevelSelection extends World with HasGameReference<SafetyStepsGame> {
   final Map<String, LevelData> levelButtons = {
     "Earthquake": LevelData(
       path: "earthquake/buttons/ModeSelectionButton.png",
-      route: "earthquake_level",
+      route: "earthquake_level_1",
     ),
     "Fire": LevelData(
       path: "earthquake/buttons/ModeSelectionButton.png",
-      route: "earthquake_level",
+      route: "earthquake_level_1",
     ),
     "Flood": LevelData(
       path: "earthquake/buttons/ModeSelectionButton.png",
-      route: "earthquake_level",
+      route: "earthquake_level_1",
     ),
   };
 

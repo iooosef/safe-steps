@@ -58,7 +58,7 @@ const List<String> _earthquakeAssets = [
 // ─────────────────────────────────────────────────────────────────────────────
 class Earthquake extends Component with HasGameReference<SSGame> {
   late final Level _level;
-  late final CameraComponent cam;
+  late final CameraComponent camera;
 
   @override
   FutureOr<void> onLoad() async {
@@ -69,36 +69,36 @@ class Earthquake extends Component with HasGameReference<SSGame> {
 
     final tutorialWorld = TutorialWorld(
       onFinished: () {
-        cam.world = _level;
+        camera.world = _level;
         _level.activate();
       },
     );
 
     final hallwayWorld = HallwayIntroWorld(
       onFinished: () {
-        cam.world = tutorialWorld;
+        camera.world = tutorialWorld;
         tutorialWorld.activate();
       },
     );
 
     final sunWorld = SunIntroWorld(
       onFinished: () {
-        cam.world = hallwayWorld;
+        camera.world = hallwayWorld;
       },
     );
 
-    cam = CameraComponent.withFixedResolution(
+    camera = CameraComponent.withFixedResolution(
       world: sunWorld,
       width: kViewportW,
       height: kViewportH,
     );
-    cam.viewfinder.anchor = Anchor.topLeft;
+    camera.viewfinder.anchor = Anchor.topLeft;
 
     await add(sunWorld);
     await add(hallwayWorld);
     await add(tutorialWorld);
     await add(_level);
-    await add(cam);
+    await add(camera);
 
     return super.onLoad();
   }

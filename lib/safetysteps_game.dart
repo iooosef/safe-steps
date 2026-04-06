@@ -5,7 +5,7 @@ import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:safesteps/earthquake.dart';
 import 'package:safesteps/level_selection.dart';
-import 'package:safesteps/levels/earthquake/earthquake_lvl.dart';
+import 'package:safesteps/levels/earthquake/earthquake_lvl1.dart';
 import 'package:safesteps/levelselect.dart';
 import 'package:safesteps/main_menu.dart';
 import 'package:safesteps/menu.dart';
@@ -16,8 +16,8 @@ class SafetyStepsGame extends FlameGame {
 
   @override
   FutureOr<void> onLoad() async {
-    cam = CameraComponent.withFixedResolution(width: 1280, height: 720)
-      ..viewfinder.anchor = Anchor.topLeft;
+    // cam = CameraComponent.withFixedResolution(width: 1280, height: 720)
+    //   ..viewfinder.anchor = Anchor.topLeft;
     cam = CameraComponent(viewport: MaxViewport())
       ..viewfinder.anchor = Anchor.topLeft;
 
@@ -26,7 +26,7 @@ class SafetyStepsGame extends FlameGame {
       routes: {
         'main_menu': Route(MainMenu.new),
         'level_select': Route(LevelSelection.new),
-        'earthquake_level': Route(EarthquakeLvl.new),
+        'earthquake_level_1': Route(EarthquakeLvl1.new),
       },
     );
 

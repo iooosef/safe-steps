@@ -104,21 +104,25 @@ class Level extends World
     add(objectContainer);
 
     // --- Animated earthquake background ---
-    final frame1 =
-        await game.loadSprite('assets/earthquake/Backgrounds/E1.jpg');
-    final frame2 =
-        await game.loadSprite('assets/earthquake/Backgrounds/E2.jpg');
-    final frame3 =
-        await game.loadSprite('assets/earthquake/Backgrounds/E3.jpg');
+    final frame1 = await game.loadSprite(
+      'assets/earthquake/Backgrounds/E1.jpg',
+    );
+    final frame2 = await game.loadSprite(
+      'assets/earthquake/Backgrounds/E2.jpg',
+    );
+    final frame3 = await game.loadSprite(
+      'assets/earthquake/Backgrounds/E3.jpg',
+    );
     destroyedBackground = await game.loadSprite(
       'assets/earthquake/Backgrounds/ClassroomDestroyed_640x360.png',
     );
 
     background = SpriteAnimationComponent(
-      animation: SpriteAnimation.spriteList(
-        [frame1, frame2, frame3],
-        stepTime: 1,
-      ),
+      animation: SpriteAnimation.spriteList([
+        frame1,
+        frame2,
+        frame3,
+      ], stepTime: 1),
       size: Vector2(kViewportW, kViewportH),
     );
     bgContainer.add(background);
@@ -130,12 +134,15 @@ class Level extends World
     objectContainer.add(table);
 
     // --- Player character ---
-    _normalSprite =
-        Sprite(game.images.fromCache('assets/characters/Normal.png'));
-    _injuredSprite =
-        Sprite(game.images.fromCache('assets/characters/Injured.png'));
-    _bandageSprite =
-        Sprite(game.images.fromCache('assets/characters/Bandage.png'));
+    _normalSprite = Sprite(
+      game.images.fromCache('assets/characters/Normal.png'),
+    );
+    _injuredSprite = Sprite(
+      game.images.fromCache('assets/characters/Injured.png'),
+    );
+    _bandageSprite = Sprite(
+      game.images.fromCache('assets/characters/Bandage.png'),
+    );
 
     _playerCharacter = SpriteComponent(
       sprite: _normalSprite,
@@ -257,8 +264,9 @@ class Level extends World
     if (correct) {
       _removeAllOverlays();
       // Transition to destroyed classroom.
-      background.animation =
-          SpriteAnimation.spriteList([destroyedBackground], stepTime: 1);
+      background.animation = SpriteAnimation.spriteList([
+        destroyedBackground,
+      ], stepTime: 1);
       clock.removeFromParent();
       table.removeFromParent();
       stopEarthquake();
@@ -401,19 +409,16 @@ class _LevelPuzzlePiece extends PositionComponent with DragCallbacks {
     required this.startPosition,
     required this.isInputLocked,
   }) : super(
-          size: Vector2(70, 70),
-          anchor: Anchor.center,
-          position: startPosition.clone(),
-          priority: 1,
-        );
+         size: Vector2(70, 70),
+         anchor: Anchor.center,
+         position: startPosition.clone(),
+         priority: 1,
+       );
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
-    _spriteComp = SpriteComponent(
-      sprite: unselectedSprite,
-      size: size,
-    );
+    _spriteComp = SpriteComponent(sprite: unselectedSprite, size: size);
     add(_spriteComp);
   }
 
@@ -468,32 +473,32 @@ class _LevelSubmitButton extends PositionComponent with TapCallbacks {
     required Vector2 position,
     required this.onPressed,
     required this.isInputLocked,
-  }) : super(
-          position: position,
-          size: Vector2(140, 44),
-          anchor: Anchor.center,
-        );
+  }) : super(position: position, size: Vector2(140, 44), anchor: Anchor.center);
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
 
-    add(RectangleComponent(
-      size: size,
-      paint: Paint()..color = const Color(0xFF00A5FF),
-    ));
-    add(TextComponent(
-      text: 'Check Order',
-      position: size / 2,
-      anchor: Anchor.center,
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          fontFamily: 'Cherry Bomb One',
-          fontSize: 16,
-          color: Colors.white,
+    add(
+      RectangleComponent(
+        size: size,
+        paint: Paint()..color = const Color(0xFF00A5FF),
+      ),
+    );
+    add(
+      TextComponent(
+        text: 'Check Order',
+        position: size / 2,
+        anchor: Anchor.center,
+        textRenderer: TextPaint(
+          style: const TextStyle(
+            fontFamily: 'Cherry Bomb One',
+            fontSize: 16,
+            color: Colors.white,
+          ),
         ),
       ),
-    ));
+    );
   }
 
   @override

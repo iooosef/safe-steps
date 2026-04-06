@@ -49,6 +49,12 @@ flutter:
     - family: Cherry Bomb One
       fonts:
         - asset: assets/fonts/CherryBombOne-Regular.ttf
+    - family: Comic Relief
+      fonts:
+        - asset: assets/fonts/ComicRelief-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/ComicRelief-Bold.ttf
+          weight: 700
 
 ### Color Scheme
 # Primary: #00a5ff
