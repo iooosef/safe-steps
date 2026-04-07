@@ -36,12 +36,10 @@ class TutorialState {
   static const List<DialogueLine> scene1Lines = [
     DialogueLine(
       speaker: 'Teacher',
-      text: 'Okay class! Today we will learn what to do if the ground starts shaking!',
+      text:
+          'Okay class! Today we will learn what to do if the ground starts shaking!',
     ),
-    DialogueLine(
-      speaker: 'Classmate',
-      text: 'Like an earthquake?',
-    ),
+    DialogueLine(speaker: 'Classmate', text: 'Like an earthquake?'),
     DialogueLine(
       speaker: 'Teacher',
       text: _teacherLine3,
@@ -98,7 +96,7 @@ class TutorialState {
     dialogueIndex = 0;
   }
 
-  static const List<String> correctOrder = ['drop', 'cover', 'hold'];
+  static const List<String> correctOrder = ['duck', 'cover', 'hold'];
 
   int mistakes = 0;
   bool showHint = false;

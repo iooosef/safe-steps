@@ -2,6 +2,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:safesteps/levels/earthquake/earthquake_lv1_puzzle.dart';
 import 'package:safesteps/safetysteps_game.dart';
 import 'package:safesteps/ssgame.dart';
 import 'package:safesteps/tutorial_overlay.dart';
@@ -13,7 +14,7 @@ void main() {
   Flame.device.setLandscape();
 
   var game = SafetyStepsGame();
-  runApp(GameWidget(game: game));
+  runApp(GameWidget<SafetyStepsGame>(game: game));
 }
 
 // refactor this out of main dart later

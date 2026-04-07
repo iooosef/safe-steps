@@ -2,11 +2,14 @@ import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
-enum BubbleTail { left, right }
+enum BubbleTail { left, middle, right }
+
+enum BubbleTailDirection { left, right }
 
 class SpeechBubble extends PositionComponent {
   String _text;
   BubbleTail tail;
+  BubbleTailDirection tailDirection;
   final double padding;
   final double radius;
   final double tailSize;
@@ -25,12 +28,12 @@ class SpeechBubble extends PositionComponent {
     ..style = PaintingStyle.stroke
     ..strokeWidth = 3;
 
-  // Laid-out painter ready to draw
   TextPainter? _painter;
 
   SpeechBubble({
     required String text,
     this.tail = BubbleTail.left,
+    this.tailDirection = BubbleTailDirection.left,
     this.padding = 16,
     this.radius = 16,
     this.tailSize = 28,
@@ -71,7 +74,6 @@ class SpeechBubble extends PositionComponent {
     canvas.drawPath(path, _bgPaint);
     canvas.drawPath(path, _borderPaint);
 
-    // Draw text manually — no child component needed
     _painter!.paint(canvas, Offset(padding, padding));
   }
 
@@ -80,36 +82,42 @@ class SpeechBubble extends PositionComponent {
     final h = size.y - tailSize;
     final r = radius.clamp(0.0, h / 2);
 
+    // Tail base center X based on position enum
+    final double tailCenterX = switch (tail) {
+      BubbleTail.left => padding + tailSize / 2,
+      BubbleTail.middle => w / 2,
+      BubbleTail.right => w - padding - tailSize / 2,
+    };
+
+    final double tailBaseLeft = (tailCenterX - tailSize / 2).clamp(
+      r,
+      w - r - tailSize,
+    );
+    final double tailBaseRight = tailBaseLeft + tailSize;
+
+    // Tail tip X based on direction
+    final double tailTipX = switch (tailDirection) {
+      BubbleTailDirection.left => tailBaseLeft,
+      BubbleTailDirection.right => tailBaseRight,
+    };
+
     final path = Path();
+    path.moveTo(r, 0);
+    path.lineTo(w - r, 0);
+    path.arcToPoint(Offset(w, r), radius: Radius.circular(r));
+    path.lineTo(w, h - r);
+    path.arcToPoint(Offset(w - r, h), radius: Radius.circular(r));
 
-    if (tail == BubbleTail.left) {
-      path.moveTo(r, 0);
-      path.lineTo(w - r, 0);
-      path.arcToPoint(Offset(w, r), radius: Radius.circular(r));
-      path.lineTo(w, h - r);
-      path.arcToPoint(Offset(w - r, h), radius: Radius.circular(r));
-      path.lineTo(padding + tailSize, h);
-      path.lineTo(0, size.y); // tail tip
-      path.lineTo(padding, h);
-      path.arcToPoint(Offset(0, h - r), radius: Radius.circular(r));
-      path.lineTo(0, r);
-      path.arcToPoint(Offset(r, 0), radius: Radius.circular(r));
-    } else {
-      path.moveTo(r, 0);
-      path.lineTo(w - r, 0);
-      path.arcToPoint(Offset(w, r), radius: Radius.circular(r));
-      path.lineTo(w, h - r);
-      path.arcToPoint(Offset(w - r, h), radius: Radius.circular(r));
-      path.lineTo(w - padding, h);
-      path.lineTo(w, size.y); // tail tip
-      path.lineTo(w - padding - tailSize, h);
-      path.lineTo(r, h);
-      path.arcToPoint(Offset(0, h - r), radius: Radius.circular(r));
-      path.lineTo(0, r);
-      path.arcToPoint(Offset(r, 0), radius: Radius.circular(r));
-    }
+    path.lineTo(tailBaseRight, h);
+    path.lineTo(tailTipX, size.y); // tail tip points in direction
+    path.lineTo(tailBaseLeft, h);
 
+    path.lineTo(r, h);
+    path.arcToPoint(Offset(0, h - r), radius: Radius.circular(r));
+    path.lineTo(0, r);
+    path.arcToPoint(Offset(r, 0), radius: Radius.circular(r));
     path.close();
+
     return path;
   }
 }

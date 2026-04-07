@@ -14,9 +14,8 @@ class EarthquakeLvl1 extends World
   late double screenWidth;
 
   DateTime? _lastTapTime;
-  static const Duration _tapCooldown = Duration(milliseconds: 600);
+  static const Duration _tapCooldown = Duration(milliseconds: 400);
 
-  late PositionComponent _tapHintContainer;
   late HintLabel _tapHint;
 
   final Map<(CharactersEnum, String), String> characters = {
@@ -40,21 +39,22 @@ class EarthquakeLvl1 extends World
     {(CharactersEnum.student, "normal"): "Like an earthquake?"},
     {
       (CharactersEnum.teacher, "done_explaining"):
-          "Yes! If an earthquake happens, remember: Drop, Cover, and Hold!",
+          "Yes! If an earthquake happens, remember: Duck, Cover, and Hold!",
     },
     {
       (CharactersEnum.student, "worried"):
-          "Drop, Cover, and Hold. I'll remember that!",
+          "Duck, Cover, and Hold. I'll remember that!",
     },
     {
       (CharactersEnum.teacher, "explaning"):
-          "Now, let's try how to Drop, Cover, and Hold.",
+          "Now, let's try how to Duck, Cover, and Hold.",
     },
     {(CharactersEnum.controller, ""): "tutorial_earthquake_1"},
   ];
 
   @override
   Future<void> onLoad() async {
+    debugPrint('Loading Earthquake Level 1 Tutorial...');
     game.setWorld(this);
     screenWidth = game.size.x;
     screenHeight = game.size.y;
@@ -64,9 +64,13 @@ class EarthquakeLvl1 extends World
       screenWidth: screenWidth,
       screenHeight: screenHeight,
     );
-
-    // await introCutscene.play(this, onComplete: _startTutorialDialog);
-    _startTutorialDialog();
+    if (!game.skipIntroCutsceneEarthquake) {
+      await introCutscene.play(this, onComplete: _startTutorialDialog);
+    } else {
+      game.skipIntroCutsceneEarthquake = false;
+      _startTutorialDialog();
+    }
+    // _startTutorialDialog();
     return super.onLoad();
   }
 
@@ -113,6 +117,7 @@ class EarthquakeLvl1 extends World
     SpeechBubble speechBubble = SpeechBubble(
       text: '',
       tail: BubbleTail.left,
+      tailDirection: BubbleTailDirection.left,
       padding: 16,
       radius: 24,
       tailSize: 30,
@@ -134,6 +139,7 @@ class EarthquakeLvl1 extends World
         await addSpeechBubble(dialog, characterKey, speechBubble);
         speechBubble
           ..tail = BubbleTail.left
+          ..tailDirection = BubbleTailDirection.left
           ..anchor = Anchor.topLeft
           ..position = Vector2(
             teacherSprite.size.x * (3 / 5),
@@ -148,6 +154,7 @@ class EarthquakeLvl1 extends World
         await addSpeechBubble(dialog, characterKey, speechBubble);
         speechBubble
           ..tail = BubbleTail.right
+          ..tailDirection = BubbleTailDirection.right
           ..anchor = Anchor.topRight
           ..position = Vector2(
             screenWidth - (studentSprite.size.x * (3 / 4)),
@@ -230,7 +237,7 @@ class EarthquakeLvl1 extends World
   Future<void> hintToContinue() async {
     _tapHint = HintLabel()..position = Vector2(16, 8);
     // _tapHint.debugMode = true;
-    add(_tapHint);
+    // Do not add here — addSpeechBubble manages when to show the hint
   }
 
   void startTutorialGame(
@@ -238,6 +245,7 @@ class EarthquakeLvl1 extends World
     SpriteComponent teacherSprite,
     SpriteComponent studentSprite,
   ) {
+    debugPrint('Starting Earthquake Level 1 Puzzle...');
     final RectangleComponent dim = RectangleComponent(
       size: tutorialDialogBackground.size,
       paint: Paint()..color = const Color(0x99000000), // 60% black
@@ -247,6 +255,10 @@ class EarthquakeLvl1 extends World
     //remove teacher and student
     if (teacherSprite.isMounted) remove(teacherSprite);
     if (studentSprite.isMounted) remove(studentSprite);
+    while (game.router.canPop()) {
+      game.router.pop();
+    }
+    game.router.pushNamed('earthquake_level_1_puzzle');
   }
 }
 

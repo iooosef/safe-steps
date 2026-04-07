@@ -43,7 +43,7 @@ const List<String> _earthquakeAssets = [
   'assets/earthquake/Buttons/CoverB_Unselected.png',
   'assets/earthquake/Buttons/CoverB_Selected.png',
   'assets/earthquake/Buttons/DuckB_Unselected.png',
-  'assets/earthquake/Buttons/DropB_Selected.png',
+  'assets/earthquake/Buttons/DuckB_Selected.png',
   'assets/earthquake/Buttons/HoldB_Unselected.png',
   'assets/earthquake/Buttons/HoldB_Selected.png',
   // Comics
@@ -455,9 +455,9 @@ class TutorialWorld extends World
   Sprite _cachedSprite(String path) => Sprite(game.images.fromCache(path));
 
   static const Map<String, (String, String)> _pieceAssets = {
-    'drop': (
+    'duck': (
       'assets/earthquake/Buttons/DuckB_Unselected.png',
-      'assets/earthquake/Buttons/DropB_Selected.png',
+      'assets/earthquake/Buttons/DuckB_Selected.png',
     ),
     'cover': (
       'assets/earthquake/Buttons/CoverB_Unselected.png',
@@ -505,8 +505,8 @@ class TutorialWorld extends World
       add(slotLabel);
     }
 
-    // Scrambled order: cover, hold, drop (must be rearranged to drop, cover, hold).
-    const pieceOrder = ['cover', 'hold', 'drop'];
+    // Scrambled order: cover, hold, duck (must be rearranged to duck, cover, hold).
+    const pieceOrder = ['cover', 'hold', 'duck'];
 
     _pieces.clear();
     for (int i = 0; i < pieceOrder.length; i++) {
