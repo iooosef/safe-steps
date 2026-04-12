@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/game.dart';
 import 'package:flutter/widgets.dart';
 import 'package:safesteps/components/speech_bubble.dart';
 import 'package:safesteps/levels/characters_enum.dart';
@@ -58,19 +59,25 @@ class EarthquakeLvl1 extends World
     game.setWorld(this);
     screenWidth = game.size.x;
     screenHeight = game.size.y;
-
-    final introCutscene = EarthquakeIntroCutscene(
-      game: game,
-      screenWidth: screenWidth,
-      screenHeight: screenHeight,
-    );
     if (!game.skipIntroCutsceneEarthquake) {
-      await introCutscene.play(this, onComplete: _startTutorialDialog);
+      game.router.pushRoute(
+        WorldRoute(
+          () => EarthquakeIntroCutscene(
+            onComplete: () {
+              debugPrint(
+                'Earthquake Intro Cutscene complete callback triggered.',
+              );
+              game.router.pop();
+              _startTutorialDialog();
+            },
+          ),
+          maintainState: false,
+        ),
+      );
     } else {
       game.skipIntroCutsceneEarthquake = false;
       _startTutorialDialog();
     }
-    // _startTutorialDialog();
     return super.onLoad();
   }
 
@@ -80,6 +87,8 @@ class EarthquakeLvl1 extends World
   }
 
   Future<void> _startTutorialDialog() async {
+    debugPrint('Starting Earthquake Level 1 Tutorial Dialog...');
+    game.setWorld(this);
     // ── SETUP Sprites ─────────────────────────────────────────
     final SpriteComponent tutorialDialogBackground = SpriteComponent()
       ..sprite = await game.loadSprite(

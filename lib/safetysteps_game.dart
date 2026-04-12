@@ -6,6 +6,7 @@ import 'package:flame/components.dart';
 import 'package:safesteps/earthquake.dart';
 import 'package:safesteps/level_selection.dart';
 import 'package:safesteps/levels/earthquake/earthquake_during_cutscene.dart';
+import 'package:safesteps/levels/earthquake/earthquake_intro_cutscene.dart';
 import 'package:safesteps/levels/earthquake/earthquake_lv1_puzzle.dart';
 import 'package:safesteps/levels/earthquake/earthquake_lvl1.dart';
 import 'package:safesteps/levelselect.dart';
@@ -31,6 +32,10 @@ class SafetyStepsGame extends FlameGame {
       routes: {
         'main_menu': Route(MainMenu.new),
         'level_select': Route(LevelSelection.new),
+        'earthquake_intro_cutscene': Route(
+          EarthquakeIntroCutscene.new,
+          maintainState: false,
+        ),
         'earthquake_level_1': Route(EarthquakeLvl1.new, maintainState: false),
         'earthquake_level_1_puzzle': Route(
           EarthquakeLvl1Puzzle.new,

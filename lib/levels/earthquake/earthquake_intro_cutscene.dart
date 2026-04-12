@@ -2,11 +2,14 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/animation.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:safesteps/safetysteps_game.dart';
 
-class EarthquakeIntroCutscene {
-  final FlameGame game;
-  final double screenWidth;
-  final double screenHeight;
+class EarthquakeIntroCutscene extends World
+    with HasGameReference<SafetyStepsGame> {
+  final VoidCallback? onComplete;
+
+  EarthquakeIntroCutscene({this.onComplete});
 
   // Durations
   static const double _comicDuration = 2.0;
@@ -14,118 +17,139 @@ class EarthquakeIntroCutscene {
   static const double _fadeInDuration = 1.0;
   static const double _walkToDoorDuration = 1.0;
   static const double _dialogFadeInDuration = 0.5;
+  double _screenWidth = 0.0;
+  double _screenHeight = 0.0;
 
-  EarthquakeIntroCutscene({
-    required this.game,
-    required this.screenWidth,
-    required this.screenHeight,
-  });
+  Sprite? _comicBackgroundSprite;
+  SpriteComponent? _comicBackground;
+  double? _comicDistanceToPan;
+  Sprite? _hallwayBackgroundSprite;
+  SpriteComponent? _hallwayBackground;
+  double? _hallwayDistanceToPan;
+  Sprite? _walkingCharacterSprite;
+  SpriteAnimationComponent? _walkingCharacter;
+  SpriteComponent? _tutorialDialogBackground;
 
-  Future<void> play(World world, {VoidCallback? onComplete}) async {
+  @override
+  Future<void> onLoad() async {
+    debugPrint('Loading Earthquake Intro Cutscene');
+    game.setWorld(this);
+    await initObjects();
+    await play(this);
+  }
+
+  double getTotalDuration() {
+    return _comicDuration +
+        _hallwayDuration -
+        _comicDuration +
+        _walkToDoorDuration +
+        _dialogFadeInDuration;
+  }
+
+  Future<void> initObjects() async {
+    _screenWidth = game.size.x;
+    _screenHeight = game.size.y;
     // ── Comic background ──────────────────────────────────────────
-    final Sprite panningBackground = await game.loadSprite(
+    _comicBackgroundSprite = await game.loadSprite(
       'earthquake/comic/full_page_background.png',
     );
-
-    const double comicAspectRatio = 1024 / 768;
-    final double comicScaledHeight = screenWidth * comicAspectRatio;
-    final double comicDistanceToPan = comicScaledHeight - screenHeight;
-
-    final SpriteComponent comicBackground = SpriteComponent()
-      ..sprite = panningBackground
-      ..size = Vector2(screenWidth, comicScaledHeight)
+    final double comicAspectRatio =
+        _comicBackgroundSprite!.srcSize.y / _comicBackgroundSprite!.srcSize.x;
+    final double comicScaledHeight = _screenWidth * comicAspectRatio;
+    _comicDistanceToPan = comicScaledHeight - _screenHeight;
+    _comicBackground = SpriteComponent()
+      ..sprite = _comicBackgroundSprite
+      ..size = Vector2(_screenWidth, comicScaledHeight)
       ..position = Vector2(0, 0)
       ..anchor = Anchor.topLeft;
 
     // ── Hallway background ────────────────────────────────────────
-    final Sprite hallwaySprite = await game.loadSprite(
+    _hallwayBackgroundSprite = await game.loadSprite(
       'earthquake/backgrounds/hallway.png',
     );
-    final Vector2 hallwaySize = hallwaySprite.srcSize;
-    final double hallwayDistanceToPan = hallwaySize.x - screenWidth;
-
-    final SpriteComponent hallwayBackground = SpriteComponent()
-      ..sprite = hallwaySprite
-      ..size = Vector2(hallwaySize.x, screenHeight)
+    _hallwayDistanceToPan = _hallwayBackgroundSprite!.srcSize.x - _screenWidth;
+    _hallwayBackground = SpriteComponent()
+      ..sprite = _hallwayBackgroundSprite
+      ..size = Vector2(_hallwayBackgroundSprite!.srcSize.x, _screenHeight)
       ..position = Vector2(0, 0)
       ..anchor = Anchor.topLeft
       ..opacity = 0.0;
 
     // ── Walking character ─────────────────────────────────────────
-    final Sprite walkingSprite = await game.loadSprite(
+    _walkingCharacterSprite = await game.loadSprite(
       'earthquake/characters/walking.png',
     );
-    final Vector2 walkingCharacterSize = walkingSprite.srcSize;
-
-    final SpriteAnimationComponent walkingCharacter = SpriteAnimationComponent()
+    _walkingCharacter = SpriteAnimationComponent()
       ..animation = SpriteAnimation.fromFrameData(
-        walkingSprite.image,
+        (await game.loadSprite('earthquake/characters/walking.png')).image,
         SpriteAnimationData.sequenced(
           amount: 4,
           stepTime: 0.15,
           textureSize: Vector2(
-            walkingCharacterSize.x / 4,
-            walkingCharacterSize.y,
+            _walkingCharacterSprite!.srcSize.x / 4,
+            _walkingCharacterSprite!.srcSize.y,
           ),
         ),
       )
       ..anchor = Anchor.center
       ..opacity = 0.0;
-    walkingCharacter
-      ..size = walkingCharacter.size * 0.75
+    _walkingCharacter!
+      ..size = _walkingCharacter!.size * 0.75
       ..position = Vector2(
-        screenWidth / 2,
-        walkingCharacter.size.y / 2 + (screenHeight - walkingCharacter.size.y),
+        _screenWidth / 2,
+        _walkingCharacter!.size.y / 2 +
+            (_screenHeight - _walkingCharacter!.size.y),
       );
 
     // ── Dialog background ─────────────────────────────────────────
-    final SpriteComponent tutorialDialogBackground = SpriteComponent()
+    _tutorialDialogBackground = SpriteComponent()
       ..sprite = await game.loadSprite(
         'earthquake/backgrounds/normal_640x360.png',
       )
       ..position = Vector2(0, 0)
       ..anchor = Anchor.topLeft
       ..opacity = 0.0;
-
     final double dialogAspectRatio =
-        tutorialDialogBackground.size.y / tutorialDialogBackground.size.x;
-    tutorialDialogBackground.size = Vector2(
-      screenWidth,
-      screenWidth * dialogAspectRatio,
+        _tutorialDialogBackground!.size.y / _tutorialDialogBackground!.size.x;
+    _tutorialDialogBackground!.size = Vector2(
+      _screenWidth,
+      _screenWidth * dialogAspectRatio,
     );
+  }
 
+  Future<void> play(World world) async {
     // ── Sequence ──────────────────────────────────────────────────
 
     // [01] Pan comic
-    world.add(comicBackground);
-    comicBackground.add(
+    world.add(_comicBackground!);
+    _comicBackground!.add(
       MoveEffect.to(
-        Vector2(0, -comicDistanceToPan),
+        Vector2(0, -_comicDistanceToPan!),
         EffectController(duration: _comicDuration, curve: Curves.linear),
       ),
     );
 
     // [02] Pre-load hallway and character (invisible)
-    world.add(hallwayBackground);
-    world.add(walkingCharacter);
+    world.add(_hallwayBackground!);
+    world.add(_walkingCharacter!);
 
     // [03] Pan hallway immediately
-    hallwayBackground.add(
+    _hallwayBackground!.add(
       MoveEffect.to(
-        Vector2(-hallwayDistanceToPan, 0),
+        Vector2(-_hallwayDistanceToPan!, 0),
         EffectController(duration: _hallwayDuration, curve: Curves.linear),
       ),
     );
 
     // [04] Fade in hallway + character after comic
     Future.delayed(Duration(milliseconds: (_comicDuration * 1000).toInt()), () {
-      hallwayBackground.add(
+      _hallwayBackground!.add(
         OpacityEffect.to(
           1.0,
           EffectController(duration: _fadeInDuration, curve: Curves.linear),
         ),
       );
-      walkingCharacter.add(
+      _walkingCharacter!.add(
         OpacityEffect.to(
           1.0,
           EffectController(duration: _fadeInDuration, curve: Curves.linear),
@@ -139,11 +163,11 @@ class EarthquakeIntroCutscene {
               .toInt(),
         ),
         () {
-          walkingCharacter.add(
+          _walkingCharacter!.add(
             MoveEffect.to(
               Vector2(
-                walkingCharacter.position.x + 300,
-                walkingCharacter.position.y,
+                _walkingCharacter!.position.x + 300,
+                _walkingCharacter!.position.y,
               ),
               EffectController(
                 duration: _walkToDoorDuration,
@@ -156,8 +180,8 @@ class EarthquakeIntroCutscene {
           Future.delayed(
             Duration(milliseconds: (_walkToDoorDuration * 1000).toInt()),
             () {
-              world.add(tutorialDialogBackground);
-              tutorialDialogBackground.add(
+              world.add(_tutorialDialogBackground!);
+              _tutorialDialogBackground!.add(
                 OpacityEffect.to(
                   1.0,
                   EffectController(
@@ -166,11 +190,18 @@ class EarthquakeIntroCutscene {
                   ),
                 ),
               );
+            },
+          );
 
-              Future.delayed(
-                Duration(milliseconds: (_dialogFadeInDuration * 1000).toInt()),
-                () => onComplete?.call(),
-              );
+          // end pop this route
+          Future.delayed(
+            Duration(
+              milliseconds:
+                  (_walkToDoorDuration * 1000 + _dialogFadeInDuration * 1000)
+                      .toInt(),
+            ),
+            () {
+              onComplete?.call();
             },
           );
         },

@@ -60,7 +60,7 @@ class EarthquakeDuringCutscene extends World
     add(studentSprite);
 
     SpeechBubble speechBubble = SpeechBubble(
-      text: 'The ground is',
+      text: 'Oh No!',
       tail: BubbleTail.left,
       tailDirection: BubbleTailDirection.right,
       padding: 16,
@@ -77,7 +77,7 @@ class EarthquakeDuringCutscene extends World
     });
 
     Future.delayed(const Duration(milliseconds: 2500), () {
-      speechBubble.updateText('shaking!');
+      speechBubble.updateText('The ground is shaking!');
       add(speechBubble);
     });
 
