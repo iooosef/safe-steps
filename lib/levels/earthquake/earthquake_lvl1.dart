@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/widgets.dart';
+import 'package:safesteps/components/hintlabel.dart';
 import 'package:safesteps/components/speech_bubble.dart';
 import 'package:safesteps/levels/characters_enum.dart';
 import 'package:safesteps/levels/earthquake/earthquake_intro_cutscene.dart';
@@ -145,7 +146,13 @@ class EarthquakeLvl1 extends World
         if (!teacherSprite.isMounted) {
           add(teacherSprite);
         }
-        await addSpeechBubble(dialog, characterKey, speechBubble);
+        await SpeechBubble.addTo(
+          this,
+          dialog,
+          characterKey,
+          speechBubble,
+          _tapHint!,
+        );
         speechBubble
           ..tail = BubbleTail.left
           ..tailDirection = BubbleTailDirection.left
@@ -160,7 +167,13 @@ class EarthquakeLvl1 extends World
         if (!studentSprite.isMounted) {
           add(studentSprite);
         }
-        await addSpeechBubble(dialog, characterKey, speechBubble);
+        await SpeechBubble.addTo(
+          this,
+          dialog,
+          characterKey,
+          speechBubble,
+          _tapHint!,
+        );
         speechBubble
           ..tail = BubbleTail.right
           ..tailDirection = BubbleTailDirection.right
@@ -219,30 +232,6 @@ class EarthquakeLvl1 extends World
     }
   }
 
-  Future<void> addSpeechBubble(
-    Map<(CharactersEnum, String), String> dialog,
-    (CharactersEnum, String) characterKey,
-    SpeechBubble speechBubble,
-  ) async {
-    if (characterKey.$1 == CharactersEnum.controller) {
-      if (speechBubble.isMounted) {
-        remove(speechBubble);
-        await speechBubble.removed; // wait for full detach
-      }
-      return;
-    }
-
-    if (speechBubble.isMounted) {
-      remove(speechBubble);
-      await speechBubble.removed;
-    }
-
-    add(speechBubble);
-    if (!_tapHint.isMounted) add(_tapHint);
-    await speechBubble.loaded;
-    speechBubble.updateText(dialog.values.first);
-  }
-
   Future<void> hintToContinue() async {
     _tapHint = HintLabel()..position = Vector2(16, 8);
     // _tapHint.debugMode = true;
@@ -268,43 +257,5 @@ class EarthquakeLvl1 extends World
       game.router.pop();
     }
     game.router.pushNamed('earthquake_level_1_puzzle');
-  }
-}
-
-class HintLabel extends PositionComponent {
-  static const double _padX = 12;
-  static const double _padY = 6;
-  static const _bgColor = Color(0xFFEEEEEE);
-  static const _radius = Radius.circular(8);
-
-  late final TextComponent _label;
-
-  @override
-  Future<void> onLoad() async {
-    _label = TextComponent(
-      text: 'Tap to continue ⏩',
-      textRenderer: TextPaint(
-        style: const TextStyle(
-          color: Color(0xFF555555),
-          fontSize: 16,
-          fontStyle: FontStyle.italic,
-          fontWeight: FontWeight.bold,
-          fontFamily: 'Comic Relief',
-        ),
-      ),
-      anchor: Anchor.topLeft,
-      position: Vector2(_padX, _padY),
-    );
-    await add(_label);
-
-    // Size this component to wrap the text tightly
-    size = _label.size + Vector2(_padX * 2, _padY * 2);
-  }
-
-  @override
-  void render(Canvas canvas) {
-    final paint = Paint()..color = _bgColor;
-    canvas.drawRRect(RRect.fromRectAndRadius(size.toRect(), _radius), paint);
-    super.render(canvas); // draws children (the TextComponent)
   }
 }

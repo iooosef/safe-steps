@@ -1,1 +1,1 @@
-enum CharactersEnum { teacher, student, controller }
+enum CharactersEnum { teacher, student, alex, controller }

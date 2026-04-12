@@ -16,8 +16,8 @@ class LevelSelection extends World with HasGameReference<SafetyStepsGame> {
       route: "earthquake_level_1",
     ),
     "Fire": LevelData(
-      path: "earthquake/buttons/ModeSelectionButton.png",
-      route: "earthquake_level_1",
+      path: "fire/FireOption (Beginning).png",
+      route: "fire_level_1",
     ),
     "Flood": LevelData(
       path: "earthquake/buttons/ModeSelectionButton.png",

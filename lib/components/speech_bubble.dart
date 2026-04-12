@@ -1,6 +1,8 @@
 import 'dart:ui' as ui;
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:safesteps/components/hintlabel.dart';
+import 'package:safesteps/levels/characters_enum.dart';
 
 enum BubbleTail { left, middle, right }
 
@@ -64,6 +66,32 @@ class SpeechBubble extends PositionComponent {
   void updateText(String newText) {
     _text = newText;
     _layout(newText);
+  }
+
+  static Future<void> addTo(
+    Component parent,
+    Map<(CharactersEnum, String), String> dialog,
+    (CharactersEnum, String) characterKey,
+    SpeechBubble speechBubble,
+    HintLabel tapHint,
+  ) async {
+    if (characterKey.$1 == CharactersEnum.controller) {
+      if (speechBubble.isMounted) {
+        parent.remove(speechBubble);
+        await speechBubble.removed;
+      }
+      return;
+    }
+
+    if (speechBubble.isMounted) {
+      parent.remove(speechBubble);
+      await speechBubble.removed;
+    }
+
+    parent.add(speechBubble);
+    if (!tapHint.isMounted) parent.add(tapHint);
+    await speechBubble.loaded;
+    speechBubble.updateText(dialog.values.first);
   }
 
   @override

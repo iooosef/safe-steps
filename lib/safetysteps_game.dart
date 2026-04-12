@@ -8,6 +8,8 @@ import 'package:safesteps/levels/earthquake/earthquake_during_cutscene.dart';
 import 'package:safesteps/levels/earthquake/earthquake_intro_cutscene.dart';
 import 'package:safesteps/levels/earthquake/earthquake_lv1_puzzle.dart';
 import 'package:safesteps/levels/earthquake/earthquake_lvl1.dart';
+import 'package:safesteps/levels/fire/fire_lv1_sc1.dart';
+import 'package:safesteps/levels/fire/fire_lvl1.dart';
 import 'package:safesteps/main_menu.dart';
 
 class SafetyStepsGame extends FlameGame {
@@ -28,7 +30,7 @@ class SafetyStepsGame extends FlameGame {
       initialRoute: 'main_menu',
       routes: {
         'main_menu': Route(MainMenu.new),
-        'level_select': Route(LevelSelection.new),
+        'level_select': Route(LevelSelection.new, maintainState: false),
         'earthquake_intro_cutscene': Route(
           EarthquakeIntroCutscene.new,
           maintainState: false,
@@ -49,6 +51,11 @@ class SafetyStepsGame extends FlameGame {
         'earthquake_level_1_puzzle_result': OverlayRoute(
           (context, game) =>
               resultOverlayBuilder(context, game as SafetyStepsGame),
+        ),
+        'fire_level_1': Route(FireLevel1.new, maintainState: false),
+        'fire_level_1_scene_1': Route(
+          FireLevel1Scene1.new,
+          maintainState: false,
         ),
       },
     );
