@@ -23,7 +23,7 @@ class FireLevel1Scene1 extends World
   SpriteComponent? _bg;
   SpriteComponent? _teacher;
   SpriteComponent? _alex;
-  SpriteComponent? _alarm;
+  AlarmSprite? _alarm;
   SpeechBubble? _speechBubble;
   late HintLabel _tapHint;
   Completer<void>? _tapCompleter;
@@ -35,7 +35,6 @@ class FireLevel1Scene1 extends World
         "earthquake/characters/TeacherExplaining.png",
     (CharactersEnum.teacher, "done_explaining"):
         "earthquake/characters/TeacherDoneExplaining.png",
-    (CharactersEnum.student, "normal"): "earthquake/characters/Normal.png",
     (CharactersEnum.alex, "normal"): "fire/FAlexNormal.png",
     (CharactersEnum.alex, "confused"): "fire/FAlexConfused_2.png",
   };
@@ -141,12 +140,16 @@ class FireLevel1Scene1 extends World
     );
 
     // ── alarm ─────────────────────────────────────────
-    _alarm = SpriteComponent()
-      ..sprite = await game.loadSprite('fire/AlarmButton.png')
-      ..anchor = Anchor.center;
+    _alarm = AlarmSprite(
+      await game.loadSprite('fire/AlarmButton.png'),
+      onTap: () {
+        _alarmTapComplete();
+      },
+    );
     _alarm!
       ..size = _alarm!.size * 0.16
-      ..position = Vector2(screenWidth * 0.75, screenHeight * 0.32);
+      ..position = Vector2(screenWidth * 0.75, screenHeight * 0.30)
+      ..anchor = Anchor.center;
   }
 
   Future<void> play() async {
@@ -218,13 +221,14 @@ class FireLevel1Scene1 extends World
             if (_tapHint.isMounted) remove(_tapHint);
           }
           debugPrint('[Dialog] CONTROLLER: $dialogText');
+
           if (dialogText == "emphasize_alarm") {
             _emphasizeAlarm();
           }
           if (dialogText == "tap_alarm_tutorial") {
             await _tapAlarmTutorial();
             debugPrint('End of this level');
-            onComplete?.call();
+            // onComplete?.call();
             return;
           }
       }
@@ -244,18 +248,7 @@ class FireLevel1Scene1 extends World
 
   @override
   void onTapDown(TapDownEvent event) {
-    final alarmHit =
-        _alarm != null &&
-        _alarm!.isMounted &&
-        _alarm!.toRect().contains(event.localPosition.toOffset());
-
-    if (alarmHit) debugPrint('[Tap] Fire alarm tapped!');
-
-    if (_alarmTapCompleter != null && !_alarmTapCompleter!.isCompleted) {
-      if (alarmHit) _alarmTapCompleter!.complete();
-    } else {
-      onScreenTap();
-    }
+    onScreenTap();
   }
 
   void onScreenTap() {
@@ -280,15 +273,19 @@ class FireLevel1Scene1 extends World
     _alarm!.add(
       SizeEffect.to(
         _alarm!.size * 1.35,
-        EffectController(duration: 0.25, reverseDuration: 0.25),
+        EffectController(
+          duration: 0.25,
+          reverseDuration: 0.25,
+          curve: Curves.easeInOut,
+        ),
       ),
     );
     // Teeter left then right then back
     _alarm!.add(
       SequenceEffect([
         RotateEffect.by(0.18, LinearEffectController(0.1)),
-        RotateEffect.by(-0.36, LinearEffectController(0.2)),
-        RotateEffect.by(0.36, LinearEffectController(0.2)),
+        RotateEffect.by(-0.24, LinearEffectController(0.1)),
+        RotateEffect.by(0.24, LinearEffectController(0.1)),
         RotateEffect.by(-0.18, LinearEffectController(0.1)),
       ]),
     );
@@ -324,26 +321,43 @@ class FireLevel1Scene1 extends World
     });
 
     debugPrint('[Dialog] Waiting for player to tap the alarm...');
-    _alarmTapCompleter = Completer<void>();
-    await _alarmTapCompleter!.future;
-    _alarmTapCompleter = null;
-    debugPrint('[Dialog] Alarm tapped!');
+    _alarm!.enable();
+  }
 
-    _teeterTimer?.cancel();
-    _teeterTimer = null;
-    breathingEffect.removeFromParent();
-
-    if (_speechBubble!.isMounted) {
-      _speechBubble!.updateText('Good job!');
-    }
-
+  void _alarmTapComplete() {
+    debugPrint('Alarm tapped!');
     // Continuous vibration after the tap
     _alarm!.add(
       SequenceEffect([
-        RotateEffect.by(0.07, LinearEffectController(0.07)),
-        RotateEffect.by(-0.14, LinearEffectController(0.14)),
-        RotateEffect.by(0.07, LinearEffectController(0.07)),
+        RotateEffect.by(0.07, LinearEffectController(0.02)),
+        RotateEffect.by(-0.14, LinearEffectController(0.04)),
+        RotateEffect.by(0.07, LinearEffectController(0.02)),
       ], infinite: true),
     );
+    _alarm!.disable();
+    onComplete?.call();
+  }
+}
+
+class AlarmSprite extends SpriteComponent
+    with TapCallbacks, HasGameReference<SafetyStepsGame> {
+  bool isEnabled = false;
+  late final VoidCallback? onTap;
+
+  AlarmSprite(Sprite sprite, {this.onTap}) : super(sprite: sprite) {}
+
+  void enable() {
+    isEnabled = true;
+  }
+
+  void disable() {
+    isEnabled = false;
+  }
+
+  @override
+  void onTapDown(TapDownEvent event) {
+    if (isEnabled) {
+      onTap?.call();
+    }
   }
 }

@@ -217,13 +217,17 @@ class EarthquakeLvl1Puzzle extends World
       game.router.pop();
       game.router.pushReplacementNamed('earthquake_level_1');
       debugPrint('WHY');
-    }
-    if (game.tutorialModeEarthquake && lastResultCorrect) {
-      // If tutorial completed successfully, exit tutorial mode and go to puzzle earthquake level
+    } else if (game.tutorialModeEarthquake && lastResultCorrect) {
+      // Tutorial completed — show during-cutscene then the real puzzle
       debugPrint('Tutorial completed! Moving to earthquake during cutscene...');
       game.tutorialModeEarthquake = false;
       game.router.pop();
       game.router.pushNamed('earthquake_during_cutscene');
+    } else if (!game.tutorialModeEarthquake && lastResultCorrect) {
+      // Non-tutorial puzzle solved — advance to level 2
+      debugPrint('Level 1 puzzle solved! Moving to earthquake level 2 puzzle...');
+      game.router.pop();
+      game.router.pushNamed('earthquake_level_2_puzzle');
     }
   }
 

@@ -91,14 +91,15 @@ class EarthquakeIntroCutscene extends World
           ),
         ),
       )
-      ..anchor = Anchor.center
+      ..anchor = Anchor.bottomLeft
       ..opacity = 0.0;
     _walkingCharacter!
       ..size = _walkingCharacter!.size * 0.75
       ..position = Vector2(
-        _screenWidth / 2,
-        _walkingCharacter!.size.y / 2 +
-            (_screenHeight - _walkingCharacter!.size.y),
+        _screenWidth * 0.25,
+        _screenHeight - 10,
+        //  _walkingCharacter!.size.y / 2 +
+        //      (_screenHeight - _walkingCharacter!.size.y),
       );
 
     // ── Dialog background ─────────────────────────────────────────

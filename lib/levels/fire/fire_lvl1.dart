@@ -17,7 +17,7 @@ class FireLevel1 extends World with HasGameReference<SafetyStepsGame> {
               while (game.router.canPop()) {
                 game.router.pop();
               }
-              game.router.pushNamed('level_select');
+              game.router.pushNamed('fire_level_1_scene_2');
             });
           },
         ),
